@@ -16,13 +16,13 @@ const network = Network.POLYGON_MAINNET;
 @Register.TokenPositionFetcher({ appId, groupId, network })
 export class PolygonBalancerV2PoolTokenFetcher implements PositionFetcher<AppTokenPosition> {
   constructor(
-    @Inject(BalancerV2PoolTokensHelper) private readonly poolTokensHelper: BalancerV2PoolTokensHelper,
+    @Inject(BalancerV2PoolTokensHelper) private readonly balancerV2PoolTokensHelper: BalancerV2PoolTokensHelper,
     @Inject(BalancerV2TheGraphPoolTokenDataStrategy)
     private readonly balancerV2TheGraphPoolTokenDataStrategy: BalancerV2TheGraphPoolTokenDataStrategy,
   ) {}
 
-  getPositions() {
-    return this.poolTokensHelper.getTokenMarketData({
+  async getPositions() {
+    return await this.balancerV2PoolTokensHelper.getTokenMarketData({
       network,
       appId,
       groupId,

@@ -32,6 +32,7 @@ type GetBalancerV2PoolTokensParams = {
   appTokenDependencies?: AppGroupsDefinition[];
   vaultAddress: string;
   minLiquidity?: number;
+  blockedPools?: string[];
   resolvePoolTokenAddresses: (opts: {
     appId: string;
     network: Network;
@@ -53,6 +54,7 @@ export class BalancerV2PoolTokensHelper {
     appTokenDependencies = [],
     vaultAddress,
     minLiquidity = 0,
+    blockedPools = [],
     resolvePoolTokenAddresses,
     resolvePoolLabelStrategy = () => BalancerV2PoolLabelStrategy.TOKEN_SYMBOLS,
   }: GetBalancerV2PoolTokensParams) {
@@ -64,6 +66,8 @@ export class BalancerV2PoolTokensHelper {
 
     const pools = await Promise.all(
       poolTokenData.map(async ({ address, volume }) => {
+        if (blockedPools.includes(address)) return null;
+
         const type = ContractType.APP_TOKEN;
         const poolContract = this.contractFactory.balancerPool({ network, address });
         const poolId = await multicall.wrap(poolContract).getPoolId();

@@ -21,11 +21,7 @@ const appId = BALANCER_V1_DEFINITION.id;
 const groupId = BALANCER_V1_DEFINITION.groups.pool.id;
 const network = Network.ETHEREUM_MAINNET;
 
-@Register.TokenPositionFetcher({
-  appId,
-  groupId,
-  network,
-})
+@Register.TokenPositionFetcher({ appId, groupId, network, options: { includeInTvl: true } })
 export class EthereumBalancerV1PoolTokenFetcher implements PositionFetcher<AppTokenPosition> {
   constructor(@Inject(APP_TOOLKIT) private readonly appToolkit: IAppToolkit) {}
 
@@ -125,6 +121,11 @@ export class EthereumBalancerV1PoolTokenFetcher implements PositionFetcher<AppTo
 
       return token;
     });
+
+    /*console.log(
+      'balancer v1',
+      sumBy(_.compact(poolTokens), v => v.supply * v.price),
+    );*/
 
     return _.compact(poolTokens);
   }

@@ -13,19 +13,20 @@ const appId = BALANCER_V2_DEFINITION.id;
 const groupId = BALANCER_V2_DEFINITION.groups.pool.id;
 const network = Network.ETHEREUM_MAINNET;
 
-@Register.TokenPositionFetcher({ appId, groupId, network })
+@Register.TokenPositionFetcher({ appId, groupId, network, options: { includeInTvl: true } })
 export class EthereumBalancerV2PoolTokenFetcher implements PositionFetcher<AppTokenPosition> {
   constructor(
-    @Inject(BalancerV2PoolTokensHelper) private readonly poolTokensHelper: BalancerV2PoolTokensHelper,
+    @Inject(BalancerV2PoolTokensHelper) private readonly balancerV2PoolTokensHelper: BalancerV2PoolTokensHelper,
     @Inject(BalancerV2TheGraphPoolTokenDataStrategy)
     private readonly balancerV2TheGraphPoolTokenDataStrategy: BalancerV2TheGraphPoolTokenDataStrategy,
   ) {}
 
-  getPositions() {
-    return this.poolTokensHelper.getTokenMarketData({
+  async getPositions() {
+    return await this.balancerV2PoolTokensHelper.getTokenMarketData({
       network,
       appId,
       groupId,
+      blockedPools: ['0x7b50775383d3d6f0215a8f290f2c9e2eebbeceb2'],
       vaultAddress: '0xba12222222228d8ba445958a75a0704d566bf2c8',
       resolvePoolTokenAddresses: this.balancerV2TheGraphPoolTokenDataStrategy.build({
         subgraphUrl: 'https://api.thegraph.com/subgraphs/name/balancer-labs/balancer-v2',

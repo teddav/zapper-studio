@@ -13,7 +13,7 @@ const appId = BALANCER_V2_DEFINITION.id;
 const groupId = BALANCER_V2_DEFINITION.groups.pool.id;
 const network = Network.ARBITRUM_MAINNET;
 
-@Register.TokenPositionFetcher({ appId, groupId, network })
+@Register.TokenPositionFetcher({ appId, groupId, network, options: { includeInTvl: true } })
 export class ArbitrumBalancerV2PoolTokenFetcher implements PositionFetcher<AppTokenPosition> {
   constructor(
     @Inject(BalancerV2PoolTokensHelper) private readonly poolTokensHelper: BalancerV2PoolTokensHelper,
@@ -21,8 +21,8 @@ export class ArbitrumBalancerV2PoolTokenFetcher implements PositionFetcher<AppTo
     private readonly balancerV2TheGraphPoolTokenDataStrategy: BalancerV2TheGraphPoolTokenDataStrategy,
   ) {}
 
-  getPositions() {
-    return this.poolTokensHelper.getTokenMarketData({
+  async getPositions() {
+    return await this.poolTokensHelper.getTokenMarketData({
       network,
       appId,
       groupId,

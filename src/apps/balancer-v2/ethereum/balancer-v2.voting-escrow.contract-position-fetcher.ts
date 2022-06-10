@@ -13,7 +13,7 @@ const appId = BALANCER_V2_DEFINITION.id;
 const groupId = BALANCER_V2_DEFINITION.groups.votingEscrow.id;
 const network = Network.ETHEREUM_MAINNET;
 
-@Register.ContractPositionFetcher({ appId, groupId, network })
+@Register.ContractPositionFetcher({ appId, groupId, network, options: { includeInTvl: true } })
 export class EthereumBalancerV2VotingEscrowContractPositionFetcher implements PositionFetcher<ContractPosition> {
   constructor(
     @Inject(CurveVotingEscrowContractPositionHelper)
@@ -23,11 +23,10 @@ export class EthereumBalancerV2VotingEscrowContractPositionFetcher implements Po
   ) {}
 
   async getPositions() {
-    const network = Network.ETHEREUM_MAINNET;
-    return this.curveVotingEscrowContractPositionHelper.getContractPositions<BalancerVeBal>({
+    return await this.curveVotingEscrowContractPositionHelper.getContractPositions<BalancerVeBal>({
       votingEscrowAddress: '0xc128a9954e6c874ea3d62ce62b468ba073093f25',
-      appId: BALANCER_V2_DEFINITION.id,
-      groupId: BALANCER_V2_DEFINITION.groups.votingEscrow.id,
+      appId,
+      groupId,
       network,
       appTokenDependencies: [
         { appId: BALANCER_V2_DEFINITION.id, groupIds: [BALANCER_V2_DEFINITION.groups.pool.id], network },
