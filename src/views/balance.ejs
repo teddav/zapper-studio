@@ -1,0 +1,249 @@
+<!-- Partials -->
+<% function renderDisplayProp(displayProp) { %>
+  <% if (typeof displayProp === 'object') { %>
+    <display-item type="<%= displayProp.type %>" value="<%= displayProp.value %>"></display-item>
+  <% } else { %>
+    <div class="f6"><%= displayProp %></div>
+  <% } %>
+<% } %>
+<!-- Partials -->
+<% function renderToken({ images = [], primaryLabel, secondaryLabel, tertiaryLabel, meta, subMeta, tokens = [] }) { %>
+<div class="flex flex-auto">
+  <!-- Image, Label and Secondary Label-->
+  <div class="flex flex-auto">
+    <div class="flex items-center mr2">
+      <% images.forEach(function (src) { %>
+      <img src="<%= src %>" style="max-width: 32px; max-height: 32px" />
+      <% }) %>
+    </div>
+    <div class="flex flex-column">
+      <div class="mb1 b"><%= primaryLabel %></div>
+      <%- renderDisplayProp(secondaryLabel) %>
+    </div>
+  </div>
+  <!-- Price and Balance -->
+  <div class="flex items-center justify-end flex-auto">
+    <div class="flex flex-column items-end">
+      <div class="mb1">
+        <display-item type="dollar" value="<%= meta %>"></display-item>
+      </div>
+      <div class="f6">
+        <display-item value="<%= subMeta %>"></display-item>
+      </div>
+    </div>
+  </div>
+</div>
+<% } %>
+<!-- -->
+<% function createAppCard(token){ %>
+<% if (token.type === 'base-token' || token.tokens.length === 0) { %>
+<div>
+  <div class="flex">
+<% } else { %>
+<div data-dropdown>
+  <div data-dropdown-target class="flex pointer">
+<% } %>
+    <!-- Render base-token -->
+    <% if (token.type === 'base-token') { %>
+    <!-- begin  -->
+    <%- renderToken({ primaryLabel: token.symbol, secondaryLabel: token.price, tertiaryLabel: '', meta:
+    token.balanceUSD, subMeta: token.balance, images:
+    ['https://storage.googleapis.com/zapper-fi-assets/tokens/'+token.network+'/'+token.address+'.png'] }); %>
+    <!-- end  -->
+    <% } %>
+    <!-- Render app-token-->
+    <% if (token.type === 'app-token') { %>
+    <!-- begin  -->
+    <%- renderToken({ primaryLabel: token.displayProps.label, secondaryLabel: token.displayProps.secondaryLabel,
+    tertiaryLabel: '', meta: token.balanceUSD, subMeta: token.balance, images: token.displayProps.images}); %>
+    <!-- end  -->
+    <% } %>
+    <!-- Render contract-token-->
+    <% if (token.type === 'contract-position') { %>
+    <div class="flex flex-auto justify-between">
+        <div><%= token.displayProps.label %></div>
+        <div><%- renderDisplayProp({type: 'dollar', value: token.balanceUSD}) %></div>
+    </div>
+    <% } %>
+    <!-- Dropdown Indicator -->
+    <% if (token.type === 'base-token' || token.tokens.length === 0) { %>
+    <div class="flex flex-none items-center ml3">&nbsp;</div>
+    <% } else { %>
+    <div class="flex flex-none items-center ml3">▼</div>
+    <% } %>
+  </div>
+  <div data-dropdown-content class="dn">
+    <div class="mt2 ml2 bl pl1">
+      <% token.tokens.forEach(function (subToken){ %>
+      <!-- begin forEach-->
+      <div class="flex">
+        <!-- Render base-token -->
+        <% if (subToken.type === 'base-token') { %>
+        <!-- begin  -->
+        <%- renderToken({ primaryLabel: subToken.symbol, secondaryLabel: subToken.price, tertiaryLabel: '', meta:
+        subToken.balanceUSD, subMeta: subToken.balance, images:
+        ['https://storage.googleapis.com/zapper-fi-assets/tokens/'+subToken.network+'/'+subToken.address+'.png'] }); %>
+        <!-- end  -->
+        <% } %>
+        <!-- Render app-token -->
+        <% if (subToken.type === 'app-token') { %>
+        <!-- begin  -->
+        <%- renderToken({ primaryLabel: subToken.displayProps.label, secondaryLabel:
+        subToken.displayProps.secondaryLabel, tertiaryLabel: '', meta: subToken.balanceUSD, subMeta: subToken.balance,
+        images: subToken.displayProps.images, tokens: subToken.tokens }); %>
+        <!-- end  -->
+        <% } %>
+      </div>
+      <!-- end forEach-->
+      <% }) %>
+    </div>
+    <div>
+      <% if (token.displayProps && token.displayProps.statsItems) { %>
+      <hr />
+      <div class="mt2">
+        <div class="b mb2">Stats</div>
+        <% token.displayProps.statsItems.forEach(function (stat){ %>
+        <div class="flex flex-auto justify-between">
+          <div><%= stat.label %></div>
+          <div>
+            <display-item type="<%= stat.value.type %>" value="<%= stat.value.value %>"></display-item>
+          </div>
+          <div></div>
+        </div>
+        <% }) %>
+      </div>
+      <% } %>
+    </div>
+  </div>
+</div>
+<% } %>
+<!-- Document -->
+<html>
+  <head>
+    <link rel="stylesheet" href="https://unpkg.com/tachyons@4.12.0/css/tachyons.min.css" />
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif,
+          'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+      }
+    </style>
+  </head>
+  <body>
+    <div class="pa3 pa5-ns">
+      <details>
+        <summary>JSON Response</summary>
+        <pre><%= JSON.stringify(data, null, 4) %></pre>
+      </details>
+      <hr />
+      <div class="mw7">
+        <% data.forEach(function (balance){ %>
+        <!--begin foreach-->
+        <div class="f4 mb2"><%= balance.address %></div>
+        <div class="flex">
+          <% balance.meta.forEach(function (meta){ %>
+          <div class="mr3">
+            <%= meta.label %>: <display-item type="<%= meta.type %>" value="<%= meta.value %>"></display-item>
+          </div>
+          <% })%>
+        </div>
+        <div>
+          <% balance.products.forEach(function (product){ %>
+            <div class="ba br3 pa2 mb3">
+              <div class="f3 mb2"><%= product.label %></div>
+              <div>
+                <% product.assets.forEach(function (asset){ %>
+                <div><%- createAppCard(asset); %></div>
+                <% })%>
+              </div>
+            </div>
+          <% })%>
+        </div>
+        <!--end foreach-->
+        <% })%>
+      </div>
+    </div>
+    <script>
+      (function () {
+        const dropdownElements = document.querySelectorAll('[data-dropdown]');
+        for (const el of dropdownElements) {
+          el.querySelector('[data-dropdown-target]').addEventListener('click', () => {
+            const targetEl = el.querySelector('[data-dropdown-content]');
+            if (!targetEl.classList.contains('dn')) {
+              targetEl.classList.add('dn');
+            } else {
+              targetEl.classList.remove('dn');
+            }
+          });
+        }
+
+        const template = document.createElement('template');
+        template.innerHTML = `<span></span>`;
+        class DisplayItem extends HTMLElement {
+          constructor() {
+            super();
+
+            this.attachShadow({ mode: 'open' });
+            this.shadowRoot.appendChild(template.content.cloneNode(true));
+
+            this.displayVal = this.shadowRoot.querySelector('span');
+          }
+
+          connectedCallback() {}
+
+          static get observedAttributes() {
+            return ['value', 'type'];
+          }
+
+          attributeChangedCallback(_name, _oldValue, _newValue) {
+            if (this.type === 'string' || !this.type) {
+              this.displayVal.innerHTML = this.value;
+            }
+
+            let intlConfig = {};
+
+            if (this.type === 'dollar') {
+              intlConfig = {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 2,
+              };
+            }
+
+            if (this.type === 'number') {
+              intlConfig = {
+                minimumFractionDigits: 2,
+              };
+            }
+
+            if (this.type === 'pct') {
+              intlConfig = {
+                style: 'percent',
+              };
+
+              if (this.value < 0.001) {
+                this.displayVal.innerText = '< 0.001%';
+                return;
+              }
+            }
+
+            const intl = new Intl.NumberFormat('en-US', {
+              ...intlConfig,
+            });
+
+            this.displayVal.innerText = intl.format(parseFloat(this.value));
+          }
+
+          get value() {
+            return this.getAttribute('value');
+          }
+
+          get type() {
+            return this.getAttribute('type');
+          }
+        }
+
+        window.customElements.define('display-item', DisplayItem);
+      })();
+    </script>
+  </body>
+</html>

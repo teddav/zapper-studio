@@ -1,0 +1,181 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="https://unpkg.com/tachyons@4.12.0/css/tachyons.min.css" />
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif,
+          'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+      }
+    </style>
+  </head>
+  <body>
+    <details>
+      <summary>JSON Response</summary>
+      <pre><%= JSON.stringify(data, null, 4) %></pre>
+    </details>
+    <div class="app"></div>
+    <!-- Cheat a bit to help prettier with formatting -->
+    <%- `
+    <script>
+      window.data = ${JSON.stringify(data)}
+    </script>
+    `;%>
+    <!-- -->
+    <script type="module">
+      import { html, Component, render } from 'https://unpkg.com/htm/preact/standalone.mjs';
+      (function () {
+        //////////////////
+        // Initial Data //
+        //////////////////
+
+        const data = window.data;
+
+        //////////////////////
+        // Helper Functions //
+        //////////////////////
+
+        const getTokenImage = ({ network, address }) =>
+          `https://storage.googleapis.com/zapper-fi-assets/tokens/${network}/${address}.png`;
+
+        const getDisplayItem = ({ type, value }) => {
+          if (type === 'string' || !type) {
+            return value;
+          }
+
+          let intlConfig = {};
+
+          if (type === 'dollar') {
+            intlConfig = {
+              style: 'currency',
+              currency: 'USD',
+              minimumFractionDigits: 2,
+            };
+          }
+
+          if (type === 'number') {
+            intlConfig = {
+              minimumFractionDigits: 2,
+            };
+          }
+
+          if (type === 'pct') {
+            intlConfig = {
+              style: 'percent',
+            };
+
+            if (value < 0.001) {
+              return `< 0.001%`;
+            }
+          }
+
+          const intl = new Intl.NumberFormat('en-US', {
+            ...intlConfig,
+          });
+
+          const text = intl.format(parseFloat(value));
+          return text;
+        };
+
+        /////////////////////////
+        // Stateful components //
+        /////////////////////////
+
+        class App extends Component {
+          addTodo() {
+            const { todos = [] } = this.state;
+
+            this.setState({ todos: todos.concat(`Item ${todos.length}`) });
+          }
+
+          render({ page }, { todos = [] }) {
+            return html`
+              <div class="renderer">
+                <div class="mw7">
+                  ${data.map(balance => {
+                    return html`<div>
+                      <div>${balance.address}</div>
+                      <${BalanceMeta} metas=${balance.meta} //>
+                      <hr />
+                      ${balance.products.map(product => html`<${Product} product=${product} //>`)}
+                    </div>`;
+                  })}
+                </div>
+              </div>
+            `;
+          }
+        }
+
+        class Product extends Component {
+          render({ product }, { isOpen = false }) {
+            const assetSum = product.assets.reduce((acc, curr) => {
+              return acc + curr.balanceUSD;
+            }, 0);
+
+            return html`<${Card}>
+              <div class="flex flex-auto justify-between">
+                <div>${product.label}</div>
+                <div><${DisplayItem} type="dollar" value=${assetSum} //></div>
+                ${product.assets.map(asset => {
+                  if (asset.type === 'app-token') {
+                    return html`<${AppToken} token=${asset} //>`;
+                  }
+
+                  return html`???`;
+                })}
+              </div>
+              <hr />
+            <//>`;
+          }
+        }
+
+        const AppToken = ({ token }) => {
+          const title = token.label || token.symbol;
+          return html`<div>
+            <div>${title}</div>
+          </div>`;
+        };
+
+        //////////////////////////
+        // Stateless Components //
+        //////////////////////////
+
+        const Card = ({ children }) => {
+          return html`<div class="ba br3 pa2 mb3">${children}</div>`;
+        };
+
+        const TokenRow = ({ title, subTitle }) => {
+          html``;
+        };
+
+        const BalanceMeta = ({ metas }) => {
+          return html`
+            <div class="flex">
+              ${metas.map(meta => {
+                return html`<div class="mr3">
+                  ${meta.label}: <${DisplayItem} type=${meta.type} value=${meta.value} //>
+                </div>`;
+              })}
+            </div>
+          `;
+        };
+
+        const ChevronDown = () => {
+          return html`<span>▼</span>`;
+        };
+
+        const DisplayItem = ({ type, value }) => {
+          return html`<span>${getDisplayItem({ type, value })}</span>`;
+        };
+
+        const Header = ({ name }) => html`<h1>${name} List</h1>`;
+
+        const Footer = props => html`<footer ...${props} />`;
+
+        ///////////////
+        // Bootstrap //
+        ///////////////
+        render(html`<${App} page="All" />`, document.querySelector('.app'));
+      })();
+    </script>
+  </body>
+</html>
