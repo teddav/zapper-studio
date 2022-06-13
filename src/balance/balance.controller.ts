@@ -19,6 +19,7 @@ export class BalanceController {
     return this.balanceService.getBalances({ ...params, ...query });
   }
 
+  /*
   @Get(`/apps/:appId/balances.html`)
   @Render('balance-preact')
   async renderAppBalances(@Param('appId') appId: string, @Query() query: GetBalancesQuery) {
@@ -34,4 +35,5 @@ export class BalanceController {
 
     return { data: resp };
   }
+  */
 }
