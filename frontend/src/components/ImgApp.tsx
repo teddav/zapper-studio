@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { getAppImg } from '../get-images';
+
+import { getAppImg } from '../lib/get-images';
 
 export function ImgApp(
   props: Omit<React.DetailedHTMLProps<React.ImgHTMLAttributes<HTMLImageElement>, HTMLImageElement>, 'src'> & {

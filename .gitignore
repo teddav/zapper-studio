@@ -48,3 +48,6 @@ Thumbs.db
 
 # local env files
 .env
+
+# Client app dist files
+/client

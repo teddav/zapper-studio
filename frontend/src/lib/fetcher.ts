@@ -1,4 +1,4 @@
-const baseURL = import.meta.env.DEV ? '/proxy' : '/';
+const BASE_URL = import.meta.env.DEV ? '/proxy' : window.location.origin;
 
 export type DisplayItem = { type: string; value: string | number } | string;
 
@@ -80,7 +80,7 @@ export type BalanceResponse = Record<
 >;
 
 export function fetcher(url: string, opt?: RequestInit) {
-  const nextUrl = `${baseURL}${url}`;
+  const nextUrl = `${BASE_URL}${url}`;
   return fetch(nextUrl, opt).then(res => res.json());
 }
 

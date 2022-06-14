@@ -11,6 +11,7 @@ specifiers:
   '@nestjs/config': ^1.1.0
   '@nestjs/core': 8.4.2
   '@nestjs/platform-express': 8.4.2
+  '@nestjs/serve-static': ^2.2.2
   '@nestjs/swagger': ^5.2.1
   '@oclif/core': ^1
   '@oclif/plugin-help': ^5
@@ -83,6 +84,7 @@ specifiers:
 dependencies:
   '@golevelup/nestjs-modules': 0.5.0_i3vvyrpmvytyggqwb6cgka6ccm
   '@nestjs/platform-express': 8.4.2_ithql7ga4sptmu4cnjc25qhlkq
+  '@nestjs/serve-static': 2.2.2_ithql7ga4sptmu4cnjc25qhlkq
   bitcoin-address-validation: 2.2.1
   cache-manager: 3.6.0
   class-transformer: 0.5.1
@@ -1347,6 +1349,17 @@ packages:
     transitivePeerDependencies:
       - chokidar
     dev: true
+
+  /@nestjs/serve-static/2.2.2_ithql7ga4sptmu4cnjc25qhlkq:
+    resolution: {integrity: sha512-3Mr+Q/npS3N7iGoF3Wd6Lj9QcjMGxbNrSqupi5cviM0IKrZ1BHl5qekW95rWYNATAVqoTmjGROAq+nKKpuUagQ==}
+    peerDependencies:
+      '@nestjs/common': ^6.0.0 || ^7.0.0 || ^8.0.0
+      '@nestjs/core': ^6.0.0 || ^7.0.0 || ^8.0.0
+    dependencies:
+      '@nestjs/common': 8.4.2_vxit34wn5s2lmlgt65te5kboda
+      '@nestjs/core': 8.4.2_ygos5qxglvmaixv4w45msfva4a
+      path-to-regexp: 0.1.7
+    dev: false
 
   /@nestjs/swagger/5.2.1_riec2wihjrfz6l57wm5jzapubu:
     resolution: {integrity: sha512-7dNa08WCnTsW/oAk3Ujde+z64JMfNm19DhpXasFR8oJp/9pggYAbYU927HpA+GJsSFJX6adjIRZsCKUqaGWznw==}

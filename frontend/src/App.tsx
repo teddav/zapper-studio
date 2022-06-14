@@ -1,14 +1,17 @@
+import * as React from 'react';
 import { useQuery } from 'react-query';
-import { fetchBalance } from './fetcher';
-import type { AppToken, BaseToken } from './fetcher';
+
+import { fetchBalance } from './lib/fetcher';
+import type { AppToken, BaseToken } from './lib/fetcher';
+import { format } from './lib/format';
+
 import { Debug } from './components/Debug';
 import { RecursivePositionRenderer } from './components/RecursivePositionRenderer';
 import { Toggle } from './components/Toggle';
 import { ImgApp } from './components/ImgApp';
 import { If } from './components/If';
 import { Stack } from './components/Stack';
-import { format } from './format';
-import React from 'react';
+import { Inline } from './components/Inline';
 import { ImgToken } from './components/ImgToken';
 
 function BalanceCard(props: { children: React.ReactNode }) {
@@ -49,7 +52,7 @@ function App() {
                               return (
                                 <BalanceCard>
                                   <div className="flex justify-between items-center">
-                                    <div className="flex items-center" style={{ gap: '12px' }}>
+                                    <Inline gap="lg">
                                       <ImgApp appId={asset.appId} style={{ width: '24px', height: '24px' }} />
                                       <div>
                                         <div className="b f5">{asset.displayProps.label}</div>
@@ -57,8 +60,8 @@ function App() {
                                           {format.displayItem(asset.displayProps.secondaryLabel)}
                                         </div>
                                       </div>
-                                    </div>
-                                    <div className="flex items-center" style={{ gap: '6px' }}>
+                                    </Inline>
+                                    <Inline gap="md">
                                       <div>
                                         <div className="b f5">{format.dollar(asset.balanceUSD)}</div>
                                         <div className="f6">{format.number(asset.balance)}</div>
@@ -70,7 +73,7 @@ function App() {
                                       >
                                         {isToggled ? 'collapse' : 'expand'}
                                       </button>
-                                    </div>
+                                    </Inline>
                                   </div>
                                   <If condition={isToggled}>
                                     <RecursivePositionRenderer<AppToken | BaseToken>
@@ -98,10 +101,15 @@ function App() {
                                           }
 
                                           return (
-                                            <div className="pa1">
-                                              {t.displayProps.label}
-                                              <div>{format.displayItem(t.displayProps.secondaryLabel)}</div>
-                                            </div>
+                                            <Inline gap="sm">
+                                              {t.displayProps.images.map(image => (
+                                                <img src={image} style={{ width: '24px', height: '24px' }} />
+                                              ))}
+                                              <div>
+                                                <div>{t.displayProps.label}</div>
+                                                <div>{format.displayItem(t.displayProps.secondaryLabel)}</div>
+                                              </div>
+                                            </Inline>
                                           );
                                         },
                                         'base-token': t => {
@@ -109,17 +117,17 @@ function App() {
                                             return null;
                                           }
                                           return (
-                                            <div className="pa1">
+                                            <Inline gap="sm">
                                               <ImgToken
                                                 address={t.address}
                                                 network={t.network}
                                                 style={{ width: '24px', height: '24px' }}
                                               />
                                               <div>
-                                                {t.symbol}
+                                                <div>{t.symbol}</div>
                                                 <div>{format.dollar(t.price)}</div>
                                               </div>
-                                            </div>
+                                            </Inline>
                                           );
                                         },
                                       }}
@@ -139,7 +147,7 @@ function App() {
                               return (
                                 <BalanceCard>
                                   <div className="flex justify-between items-center">
-                                    <div className="flex items-center" style={{ gap: '12px' }}>
+                                    <Inline gap="lg">
                                       <ImgApp appId={asset.appId} style={{ width: '24px', height: '24px' }} />
                                       <div className="b f5">
                                         {asset.displayProps.label}
@@ -147,8 +155,8 @@ function App() {
                                           {format.displayItem(asset.displayProps.secondaryLabel)}
                                         </div>
                                       </div>
-                                    </div>
-                                    <div className="flex items-center" style={{ gap: '6px' }}>
+                                    </Inline>
+                                    <Inline gap="md">
                                       <div>
                                         <div className="b f5">{format.dollar(asset.balanceUSD)}</div>
                                       </div>
@@ -159,7 +167,7 @@ function App() {
                                       >
                                         {isToggled ? 'collapse' : 'expand'}
                                       </button>
-                                    </div>
+                                    </Inline>
                                   </div>
                                   <If condition={isToggled}>stuff</If>
                                 </BalanceCard>

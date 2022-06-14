@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { getTokenImg } from '../get-images';
+
+import { getTokenImg } from '../lib/get-images';
 
 export function ImgToken(
   props: Omit<React.DetailedHTMLProps<React.ImgHTMLAttributes<HTMLImageElement>, HTMLImageElement>, 'src'> & {

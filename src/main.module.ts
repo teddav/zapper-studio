@@ -1,6 +1,8 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { ServeStaticModule } from '@nestjs/serve-static';
 import { compact } from 'lodash';
+import { join } from 'path';
 
 import { AppToolkitModule } from '~app-toolkit/app-toolkit.module';
 import { AppsModule } from '~apps/apps.module';
@@ -28,6 +30,10 @@ import { StatsModule } from '~stats/stats.module';
           apiResolvedPositions: compact((process.env.API_RESOLVED_POSITIONS ?? '').split(',')),
         }),
       ],
+    }),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'client'),
+      serveRoot: '/ui',
     }),
   ],
 })

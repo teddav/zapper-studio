@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { createVariantMap } from '../createVariantMap';
+import { createVariantMap } from '../lib/createVariantMap';
 
 type GapVariants = 'sm' | 'md' | 'lg';
 
